@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scientific Figure Studio"
+  short_description: "High-impact figures with 120+ plot recipes and journal QC"
+  default_prompt: "Use $scientific-figure-studio to design and export a traceable scientific figure package."
