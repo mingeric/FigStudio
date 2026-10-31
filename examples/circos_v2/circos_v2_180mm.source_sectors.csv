@@ -1,0 +1,13 @@
+sector,display_name,order
+Lung,Lung,0
+Breast,Breast,1
+Colon,Colorectal,2
+Melanoma,Melanoma,3
+Ovarian,Ovarian,4
+Prostate,Prostate,5
+Liver,Liver,6
+Pancreas,Pancreas,7
+Kidney,Kidney,8
+Bladder,Bladder,9
+Stomach,Stomach,10
+Thyroid,Thyroid,11

@@ -1,0 +1,53 @@
+{
+  "schema_version": "2.0",
+  "input_sha256": {
+    "examples/circos_v2/features.csv": "ff9db7c77278d98744cc24eacd18fb2ff14d48520bbf41e5e7efc79504608fdc",
+    "examples/circos_v2/links.csv": "50163f91d7816275ca4baabd0bc456db9da4a4fd3590e0adf109d0624898c753",
+    "examples/circos_v2/sectors.csv": "fbff63d8be3064c51632a17444dab6ca5382478c5accab18d9b2c9321bdc2b5e"
+  },
+  "configuration": {
+    "recipe": "circos_lollipop_chord",
+    "seed": 0,
+    "top_k": 4,
+    "gap_degrees": 2,
+    "start_angle": 0,
+    "link_limit": null,
+    "baseline": 0,
+    "signed_scores": false,
+    "width_mm": 180.0,
+    "label_orientation": "tangent",
+    "max_label_chars": 18,
+    "scale": null,
+    "chord_tension": 0.72,
+    "bundle_strength": 0.025,
+    "data_status": "demo",
+    "inputs": {
+      "features": "examples/circos_v2/features.csv",
+      "links": "examples/circos_v2/links.csv",
+      "sectors": "examples/circos_v2/sectors.csv"
+    },
+    "source_snapshot_sha256": {
+      "features": "ff9db7c77278d98744cc24eacd18fb2ff14d48520bbf41e5e7efc79504608fdc",
+      "links": "50163f91d7816275ca4baabd0bc456db9da4a4fd3590e0adf109d0624898c753",
+      "sectors": "fbff63d8be3064c51632a17444dab6ca5382478c5accab18d9b2c9321bdc2b5e"
+    }
+  },
+  "software": {
+    "python": "3.14.6",
+    "matplotlib": "3.11.2",
+    "numpy": "2.5.4"
+  },
+  "data_status": "demo",
+  "output_sha256": {
+    "examples/circos_v2/circos_v2_180mm.pdf": "5ad11fed0680bf9206c3554c4a63f050111fc4b3925592646ec73bd144a183ee",
+    "examples/circos_v2/circos_v2_180mm.svg": "af10cebc49e41939b68f3ed8dbcae599d951ba7c83cc35a91e97c793ac1254fa",
+    "examples/circos_v2/circos_v2_180mm.png": "1cd959dce49fe7707281eea4505a3da350fc0408e7c9110c461036b756431988",
+    "examples/circos_v2/circos_v2_180mm.source_features.csv": "ff9db7c77278d98744cc24eacd18fb2ff14d48520bbf41e5e7efc79504608fdc",
+    "examples/circos_v2/circos_v2_180mm.source_sectors.csv": "fbff63d8be3064c51632a17444dab6ca5382478c5accab18d9b2c9321bdc2b5e",
+    "examples/circos_v2/circos_v2_180mm.source_links.csv": "50163f91d7816275ca4baabd0bc456db9da4a4fd3590e0adf109d0624898c753",
+    "examples/circos_v2/circos_v2_180mm.suppressed_labels.csv": "deadb6ce583bbc3be7a39a4c7cb97e52b87ca8e2b4d29dd0c4917eabc2df3a8e",
+    "examples/circos_v2/circos_v2_180mm.metadata.json": "dc5eb9c932e4b12e95db279c4682e74cac37d1f3b76c8e772ff03c7fb8e42d2a",
+    "examples/circos_v2/circos_v2_180mm.config.yaml": "6b5fc8351b1cdfb2fb38f433f867c169cb27184b94daaa682d10965461600e78",
+    "examples/circos_v2/circos_v2_180mm.qc.json": "24757a896d60b51b89001afb71aad7f505663beb1e1856d98e35aeecbec205ab"
+  }
+}

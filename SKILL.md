@@ -1,6 +1,6 @@
 ---
 name: scientific-figure-studio
-description: Design, draw, export, and critically review traceable biomedical and bioinformatics figures for Nature/Cell/Science-style submission. Use for manuscript figures, mechanisms, graphical abstracts, multi-panel composites, journal TIFF/PDF/SVG export, AI-assisted conceptual schematics, or any request for publication-grade scientific plots. Includes a tested catalog of 128 plot recipes and a native Python renderer.
+description: Design, draw, export, and critically review traceable biomedical and bioinformatics figures for Nature/Cell/Science-style submission. Use for manuscript figures, mechanisms, graphical abstracts, multi-panel composites, journal TIFF/PDF/SVG export, AI-assisted conceptual schematics, or any request for publication-grade scientific plots. Includes a tested catalog of 129 plot recipes and a native Python renderer.
 ---
 
 # Scientific Figure Studio
@@ -35,15 +35,18 @@ Use the reading order `context → focal result → orthogonal validation → bo
 
 ### 2. Select a plot recipe
 
-The bundled renderer exposes 128 registered recipes across distributions, comparisons, associations, multivariate views, matrices, networks/flows, temporal/survival analyses, genomics, spatial analysis, and mechanism diagrams. Inspect or render the catalog before inventing a new chart:
+The bundled renderer exposes 129 recipes across distributions, comparisons, associations, multivariate views, matrices, networks/flows, temporal/survival analyses, genomics, spatial analysis, and mechanism diagrams. Inspect or render the catalog before inventing a new chart:
 
 ```bash
 python scripts/figure_studio.py catalog
 python scripts/figure_studio.py render --kind volcano_plot --out figure --seed 7
-python scripts/figure_studio.py contact-sheet --out catalog_preview --limit 128
+python scripts/figure_studio.py render --kind circos_lollipop_chord --features examples/circos_v2/features.csv --links examples/circos_v2/links.csv --sectors examples/circos_v2/sectors.csv --data-status demo --top-k 4 --width-mm 180 --formats pdf,svg,png --out results/circos_v2
+python scripts/figure_studio.py contact-sheet --out catalog_preview --limit 129
 ```
 
 Use the catalog as a starting point, not as a reason to force a template. Pass real source arrays through a native plotting script when the project provides them; demo data are only for smoke tests and examples.
+
+For `circos_lollipop_chord`, follow the feature-anchored V2 CSV contract in [references/plot-catalog.md](references/plot-catalog.md). Links represent feature-level associations and do not establish causality. Missing feature anchors fail validation; sector-center substitutions are prohibited. The example CSVs are synthetic placeholders, never biological findings. Export includes editable PDF/SVG, 600 dpi PNG, source CSV snapshots, YAML configuration, run manifest, suppressed-label table, metadata, and a QC report.
 
 ### 3. Apply the visual system
 
@@ -65,6 +68,7 @@ Use the bundled renderer for deterministic demo assets and the project’s nativ
 
 ```bash
 python scripts/figure_studio.py render --kind mechanism_schematic --out mechanism --formats pdf,svg,png,tiff
+python scripts/figure_studio.py render --kind circos_lollipop_chord --features examples/circos_v2/features.csv --links examples/circos_v2/links.csv --sectors examples/circos_v2/sectors.csv --data-status demo --top-k 4 --width-mm 180 --formats pdf,svg,png --out results/circos_v2
 python scripts/qc_figures.py path/to/figures --output audit/figure_qc.tsv --json audit/figure_qc.json
 ```
 
@@ -86,7 +90,7 @@ Provide:
 
 ## Resource map
 
-- [references/plot-catalog.md](references/plot-catalog.md): 128 registered recipes and selection guidance.
+- [references/plot-catalog.md](references/plot-catalog.md): 129 registered recipes and selection guidance.
 - [references/figure-contract.md](references/figure-contract.md): panel-level provenance and evidence-boundary template.
 - [references/journal-export.md](references/journal-export.md): dimensions, typography, colour, raster/vector, and QC standards.
 - `scripts/figure_studio.py`: catalog, deterministic rendering, mechanism fallback, export, and contact-sheet CLI.

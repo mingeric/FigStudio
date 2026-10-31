@@ -1,0 +1,12 @@
+source_sector,target_sector,feature,weight
+Lung,Breast,GENE01,0.5
+Lung,Colon,GENE02,0.85
+Breast,Melanoma,GENE03,1.2
+Colon,Ovarian,GENE04,1.55
+Melanoma,Prostate,GENE05,0.5
+Ovarian,Prostate,GENE06,0.85
+Lung,Ovarian,GENE07,1.2
+Breast,Colon,GENE08,1.55
+Colon,Prostate,GENE09,0.5
+Breast,Ovarian,GENE10,0.85
+Lung,Melanoma,GENE01,1.2

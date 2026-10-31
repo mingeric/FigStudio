@@ -12,11 +12,15 @@ from figure_studio import CATALOG, export_figure, render_kind
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(); parser.add_argument("--out-dir", type=Path, required=True); parser.add_argument("--limit", type=int, default=128)
+    parser = argparse.ArgumentParser(); parser.add_argument("--out-dir", type=Path, required=True); parser.add_argument("--limit", type=int, default=129)
     args = parser.parse_args(); args.out_dir.mkdir(parents=True, exist_ok=True)
     names = list(CATALOG)[:args.limit]
     for i, name in enumerate(names):
-        fig = render_kind(name, seed=i)
+        if name == "circos_lollipop_chord":
+            examples = Path(__file__).resolve().parents[1] / "examples" / "circos"
+            fig = render_kind(name, seed=i, scores=examples / "gene_scores.csv", links=examples / "links.csv", sectors=examples / "sectors.csv")
+        else:
+            fig = render_kind(name, seed=i)
         export_figure(fig, args.out_dir / name, ["png"])
         plt.close(fig)
     expected = {f"{name}.png" for name in names}; actual = {p.name for p in args.out_dir.glob("*.png")}
