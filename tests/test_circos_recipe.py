@@ -34,7 +34,8 @@ class CircosRecipeTests(unittest.TestCase):
                 gene = ("VeryLongGeneLabel_" + "X" * 45 + str(gi)) if long else f"Gene{gi}"
                 score_rows.append([sector, gene, gi + 1, ("up", "down", "risk", "protective", "neutral")[gi % 5], "", 0])
         scores = self.write("scores.csv", ["sector", "gene", "score", "direction", "display_label", "label_priority"], score_rows)
-        link_rows = links if links is not None else [[names[i], names[i+1], "Gene1", 1] for i in range(len(names)-1)]
+        link_feature = score_rows[1][1] if long else "Gene1"
+        link_rows = links if links is not None else [[names[i], names[i+1], link_feature, 1] for i in range(len(names)-1)]
         link_path = self.write("links.csv", ["source_sector", "target_sector", "feature", "weight"], link_rows)
         sectors = self.write("sectors.csv", ["sector", "display_name", "order", "color"], [[n, n, i, "#DCE8EF"] for i, n in enumerate(names)])
         return load_data(scores, link_path, sectors), scores, link_path, sectors
@@ -59,9 +60,9 @@ class CircosRecipeTests(unittest.TestCase):
         self.assertEqual(lines2 - lines1, 1)
 
     def test_missing_data_and_invalid_sectors_fail_clearly(self):
-        with self.assertRaisesRegex(ValueError, "requires --scores and --links"):
+        with self.assertRaisesRegex(ValueError, "requires --features and --links"):
             render_kind("circos_lollipop_chord")
-        with self.assertRaisesRegex(ValueError, "does not exist"):
+        with self.assertRaisesRegex(ValueError, "absent from gene_scores.csv"):
             self.data(links=[["missing", "Sector1", "Gene1", 1]])
 
     def test_missing_score_column_and_duplicate_feature_link_fail(self):
@@ -69,7 +70,7 @@ class CircosRecipeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "missing required columns: score"):
             load_data(bad, self.write("emptylinks.csv", ["source_sector", "target_sector"], []))
         duplicate = [["Sector0", "Sector1", "Gene1", 1], ["Sector0", "Sector1", "Gene1", 2]]
-        with self.assertRaisesRegex(ValueError, "duplicate ambiguous link"):
+        with self.assertRaisesRegex(ValueError, "conflicting type or weight"):
             self.data(links=duplicate)
 
     def test_nonfinite_or_negative_scores_and_unknown_directions_fail(self):
@@ -88,11 +89,11 @@ class CircosRecipeTests(unittest.TestCase):
         fig = render(data, baseline=0)
         self.assertGreater(len(fig.axes[0].lines), 0)
         plt.close(fig)
-        with self.assertRaisesRegex(ValueError, "exceeds --scale"):
+        with self.assertRaisesRegex(ValueError, "exceeds the configured symmetric scale"):
             render(data, baseline=0, score_scale=1)
-        zero_weight = self.write("zero.csv", ["source_sector", "target_sector", "weight"], [["A", "A", 0]])
+        zero_weight = self.write("zero.csv", ["source_sector", "target_sector", "feature", "weight"], [["A", "A", "G", 0]])
         with self.assertRaisesRegex(ValueError, "must be finite and positive"):
-            load_data(self.write("positive.csv", ["sector", "gene", "score", "direction"], [["A", "G", 1, "up"]]), zero_weight)
+            load_data(self.write("positive.csv", ["sector", "gene", "score", "direction"], [["A", "G", 1, "up"], ["B", "G", 1, "up"]]), zero_weight)
 
     def test_fixed_input_produces_identical_artist_geometry(self):
         data, *_ = self.data()

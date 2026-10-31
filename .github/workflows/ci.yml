@@ -17,8 +17,8 @@ jobs:
       - run: python scripts/test_catalog.py --out-dir /tmp/figstudio-catalog --limit 129
       - run: >-
           python scripts/figure_studio.py render --kind circos_lollipop_chord
-          --scores examples/circos/gene_scores.csv --links examples/circos/links.csv
-          --sectors examples/circos/sectors.csv --data-status demo
+          --features examples/circos_v2/features.csv --links examples/circos_v2/links.csv
+          --sectors examples/circos_v2/sectors.csv --data-status demo --top-k 4 --width-mm 180
           --formats pdf,svg,png --out /tmp/figstudio-circos/circos
       - run: >-
           python scripts/qc_figures.py /tmp/figstudio-circos

@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "status": "demo",
+  "checks": {
+    "all_input_links_have_named_feature_anchors": {
+      "pass": true,
+      "links_drawn": 21
+    },
+    "chords_keep_open_center": {
+      "pass": true,
+      "minimum_sampled_radius": 0.24609999999999999
+    },
+    "feature_count_matches_render": {
+      "pass": true,
+      "features_drawn": 240
+    },
+    "suppressed_labels_are_recorded": {
+      "pass": true,
+      "suppressed_label_rows": 210
+    },
+    "vector_and_600dpi_rgb_raster_exported": {
+      "pass": true,
+      "files": [
+        "examples/circos_v2/circos_v2_180mm.pdf",
+        "examples/circos_v2/circos_v2_180mm.svg",
+        "examples/circos_v2/circos_v2_180mm.png"
+      ],
+      "raster_details": [
+        {
+          "file": "examples/circos_v2/circos_v2_180mm.png",
+          "mode": "RGB",
+          "size_px": [
+            4251,
+            4251
+          ],
+          "dpi": [
+            599.9988,
+            599.9988
+          ]
+        }
+      ]
+    }
+  },
+  "passed": true
+}

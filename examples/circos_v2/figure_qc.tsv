@@ -1,0 +1,3 @@
+dpi_ok	dpi_x	dpi_y	file	height_px	kind	mode	pdf_ok	rgb_ok	sha256	size_mb	status	svg_ok	width_px
+True	600.0	600.0	examples/circos_v2/circos_v2_180mm.png	4251	FINAL_FIGURE	RGB	True	True	1cd959dce49fe7707281eea4505a3da350fc0408e7c9110c461036b756431988	1.946	PASS	True	4251
+True	600.0	600.0	examples/circos_v2/circos_v2_90mm.png	2125	FINAL_FIGURE	RGB	True	True	c778ab28781fe8662dbb230b9955f945dd7722d10115fdce6f77fd497a460ad2	0.901	PASS	True	2125

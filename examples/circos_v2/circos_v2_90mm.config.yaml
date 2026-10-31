@@ -1,0 +1,19 @@
+schema_version: 2.0
+configuration:
+  recipe: "circos_lollipop_chord"
+  seed: 0
+  top_k: 4
+  gap_degrees: 2
+  start_angle: 0
+  link_limit: null
+  baseline: 0
+  signed_scores: false
+  width_mm: 90.0
+  label_orientation: "tangent"
+  max_label_chars: 18
+  scale: null
+  chord_tension: 0.72
+  bundle_strength: 0.025
+  data_status: "demo"
+  inputs: {"features": "examples/circos_v2/features.csv", "links": "examples/circos_v2/links.csv", "sectors": "examples/circos_v2/sectors.csv"}
+  source_snapshot_sha256: {"features": "ff9db7c77278d98744cc24eacd18fb2ff14d48520bbf41e5e7efc79504608fdc", "links": "50163f91d7816275ca4baabd0bc456db9da4a4fd3590e0adf109d0624898c753", "sectors": "fbff63d8be3064c51632a17444dab6ca5382478c5accab18d9b2c9321bdc2b5e"}

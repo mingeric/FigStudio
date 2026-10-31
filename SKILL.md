@@ -40,13 +40,13 @@ The bundled renderer exposes 129 recipes across distributions, comparisons, asso
 ```bash
 python scripts/figure_studio.py catalog
 python scripts/figure_studio.py render --kind volcano_plot --out figure --seed 7
-python scripts/figure_studio.py render --kind circos_lollipop_chord --scores examples/circos/gene_scores.csv --links examples/circos/links.csv --sectors examples/circos/sectors.csv --data-status demo --formats pdf,svg,png --out results/circos
+python scripts/figure_studio.py render --kind circos_lollipop_chord --features examples/circos_v2/features.csv --links examples/circos_v2/links.csv --sectors examples/circos_v2/sectors.csv --data-status demo --top-k 4 --width-mm 180 --formats pdf,svg,png --out results/circos_v2
 python scripts/figure_studio.py contact-sheet --out catalog_preview --limit 129
 ```
 
 Use the catalog as a starting point, not as a reason to force a template. Pass real source arrays through a native plotting script when the project provides them; demo data are only for smoke tests and examples.
 
-For `circos_lollipop_chord`, follow the versioned CSV contract in [references/plot-catalog.md](references/plot-catalog.md). Links represent shared-feature associations and do not establish causality. The example CSVs are synthetic placeholders, never biological findings. Export includes editable PDF/SVG, 600 dpi PNG, and a metadata JSON with input SHA-256 hashes and data status.
+For `circos_lollipop_chord`, follow the feature-anchored V2 CSV contract in [references/plot-catalog.md](references/plot-catalog.md). Links represent feature-level associations and do not establish causality. Missing feature anchors fail validation; sector-center substitutions are prohibited. The example CSVs are synthetic placeholders, never biological findings. Export includes editable PDF/SVG, 600 dpi PNG, source CSV snapshots, YAML configuration, run manifest, suppressed-label table, metadata, and a QC report.
 
 ### 3. Apply the visual system
 
@@ -68,7 +68,7 @@ Use the bundled renderer for deterministic demo assets and the project’s nativ
 
 ```bash
 python scripts/figure_studio.py render --kind mechanism_schematic --out mechanism --formats pdf,svg,png,tiff
-python scripts/figure_studio.py render --kind circos_lollipop_chord --scores examples/circos/gene_scores.csv --links examples/circos/links.csv --sectors examples/circos/sectors.csv --data-status demo --formats pdf,svg,png --out results/circos
+python scripts/figure_studio.py render --kind circos_lollipop_chord --features examples/circos_v2/features.csv --links examples/circos_v2/links.csv --sectors examples/circos_v2/sectors.csv --data-status demo --top-k 4 --width-mm 180 --formats pdf,svg,png --out results/circos_v2
 python scripts/qc_figures.py path/to/figures --output audit/figure_qc.tsv --json audit/figure_qc.json
 ```
 

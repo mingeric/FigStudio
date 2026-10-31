@@ -1,0 +1,34 @@
+[
+  {
+    "file": "examples/circos_v2/circos_v2_180mm.png",
+    "kind": "FINAL_FIGURE",
+    "status": "PASS",
+    "mode": "RGB",
+    "width_px": 4251,
+    "height_px": 4251,
+    "dpi_x": 600.0,
+    "dpi_y": 600.0,
+    "rgb_ok": true,
+    "dpi_ok": true,
+    "pdf_ok": true,
+    "svg_ok": true,
+    "sha256": "1cd959dce49fe7707281eea4505a3da350fc0408e7c9110c461036b756431988",
+    "size_mb": 1.946
+  },
+  {
+    "file": "examples/circos_v2/circos_v2_90mm.png",
+    "kind": "FINAL_FIGURE",
+    "status": "PASS",
+    "mode": "RGB",
+    "width_px": 2125,
+    "height_px": 2125,
+    "dpi_x": 600.0,
+    "dpi_y": 600.0,
+    "rgb_ok": true,
+    "dpi_ok": true,
+    "pdf_ok": true,
+    "svg_ok": true,
+    "sha256": "c778ab28781fe8662dbb230b9955f945dd7722d10115fdce6f77fd497a460ad2",
+    "size_mb": 0.901
+  }
+]
