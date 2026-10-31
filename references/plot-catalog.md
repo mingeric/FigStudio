@@ -1,6 +1,6 @@
 # Plot catalog
 
-The bundled renderer exposes 128 deterministic recipe names. They are grouped by evidence morphology rather than by a single software package. A recipe can be rebuilt from project-native source data; the renderer’s built-in data are smoke-test data only.
+The bundled renderer exposes 129 recipe names. Most catalog entries are deterministic smoke-test renderers; `circos_lollipop_chord` is a data-driven recipe and requires input tables.
 
 ## Selection rule
 
@@ -38,7 +38,29 @@ Choose the smallest recipe that answers the panel question. Keep raw observation
 
 ### Genomics, spatial, and mechanism
 
-`protein_track`, `mutation_lollipop`, `genome_track`, `chromosome_ideogram`, `circos_overview`, `variant_burden`, `allele_frequency_spectrum`, `spatial_feature`, `spatial_grid`, `spatial_hexbin`, `spatial_dotplot`, `image_quantification`, `cell_type_composition`, `ligand_receptor_lollipop`, `mechanism_schematic`, `graphical_abstract`
+`protein_track`, `mutation_lollipop`, `genome_track`, `chromosome_ideogram`, `circos_overview`, `circos_lollipop_chord`, `variant_burden`, `allele_frequency_spectrum`, `spatial_feature`, `spatial_grid`, `spatial_hexbin`, `spatial_dotplot`, `image_quantification`, `cell_type_composition`, `ligand_receptor_lollipop`, `mechanism_schematic`, `graphical_abstract`
+
+## Data-driven Circos composite
+
+`circos_lollipop_chord` consumes `gene_scores.csv` and `links.csv`, with optional `sectors.csv`. It draws per-sector radial score lollipops, sparse prioritized gene labels, a pale sector-name band, and explicit shared-feature links in a single Matplotlib polar layout. The `examples/circos/` tables are synthetic software examples only, not biological findings.
+
+Input contract (schema version 1.0):
+
+- `gene_scores.csv` requires `sector,gene,score,direction`. Optional columns: `display_label,label_priority,evidence_id,sample_size`. Each `(sector,gene)` must be unique. Scores must be finite and non-negative unless `--signed-scores` is passed; in signed mode `--baseline` is the dashed mid-track reference and values extend inward or outward by absolute deviation. `--scale` optionally fixes the deviation range; otherwise the maximum absolute deviation from baseline is used. Values beyond an explicit scale are rejected rather than clipped.
+- `direction` must be one of `up`, `down`, `risk`, `protective`, or `neutral`; the legend maps up/risk to blue, down/protective to coral, and neutral to teal.
+- `links.csv` requires `source_sector,target_sector`; optional `feature,weight`. A link means shared feature/sector association, never a causal interaction. Missing weights default to 1 as equal contribution; explicit weights must be finite and positive. When `feature` matches a gene in both sectors, the line anchors to those gene positions; otherwise it connects sector centers.
+- `sectors.csv` optionally defines `sector,display_name,order,color`. Every listed sector must occur in the score table.
+
+Example:
+
+```bash
+python scripts/figure_studio.py render --kind circos_lollipop_chord \
+  --scores examples/circos/gene_scores.csv --links examples/circos/links.csv \
+  --sectors examples/circos/sectors.csv --data-status demo \
+  --top-n 4 --link-limit 500 --formats pdf,svg,png --out results/circos
+```
+
+The Circos PNG is 600 dpi. PDF/SVG remain editable vector exports. `results/circos.metadata.json` records schema, input hashes, configuration, software versions, and `demo`/`real` status. `--top-n`, `--gap-degrees`, `--link-limit`, `--figsize`, `--label-orientation`, `--max-label-chars`, `--inner-radius`, and `--outer-radius` tune density and geometry. Long labels are ellipsized at the display limit while the full value remains in the input table. Colorblind-safe blue/coral/teal classes are used, and sector colors can be specified directly.
 
 ## Evidence-aware mapping
 

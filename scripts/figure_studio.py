@@ -78,7 +78,7 @@ CATALOG_GROUPS: dict[str, tuple[str, ...]] = {
         "risk_table",
     ),
     "genomics_spatial_mechanism": (
-        "protein_track", "mutation_lollipop", "genome_track", "chromosome_ideogram", "circos_overview",
+        "protein_track", "mutation_lollipop", "genome_track", "chromosome_ideogram", "circos_overview", "circos_lollipop_chord",
         "variant_burden", "allele_frequency_spectrum", "spatial_feature", "spatial_grid", "spatial_hexbin",
         "spatial_dotplot", "image_quantification", "cell_type_composition", "ligand_receptor_lollipop",
         "mechanism_schematic", "graphical_abstract",
@@ -88,7 +88,7 @@ CATALOG_GROUPS: dict[str, tuple[str, ...]] = {
 CATALOG: dict[str, str] = {
     name: group for group, names in CATALOG_GROUPS.items() for name in names
 }
-assert len(CATALOG) == 128, f"catalog must contain 128 unique recipes, found {len(CATALOG)}"
+assert len(CATALOG) == 129, f"catalog must contain 129 unique recipes, found {len(CATALOG)}"
 
 
 def _style() -> None:
@@ -302,8 +302,22 @@ def _draw_genomics(ax: plt.Axes, kind: str, rng: np.random.Generator) -> None:
     _title(ax, kind)
 
 
-def render_kind(kind: str, *, seed: int = 0, ax: plt.Axes | None = None) -> plt.Figure:
-    if kind not in CATALOG: raise ValueError(f"Unknown recipe {kind!r}; use `catalog` to list 128 recipes")
+def render_kind(kind: str, *, seed: int = 0, ax: plt.Axes | None = None,
+                scores: Path | None = None, links: Path | None = None, sectors: Path | None = None,
+                signed_scores: bool = False, baseline: float = 0, top_n: int = 4,
+                gap_degrees: float = 3, link_limit: int = 500, figsize: float = 8,
+                label_orientation: str = "tangent", inner_radius: float = .48,
+                outer_radius: float = .83, max_label_chars: int = 18,
+                score_scale: float | None = None) -> plt.Figure:
+    if kind not in CATALOG: raise ValueError(f"Unknown recipe {kind!r}; use `catalog` to list 129 recipes")
+    if kind == "circos_lollipop_chord":
+        if scores is None or links is None:
+            raise ValueError("circos_lollipop_chord requires --scores and --links; provide real data or the explicitly synthetic demo tables")
+        from circos_recipe import load_data, render
+        return render(load_data(scores, links, sectors, signed_scores=signed_scores), top_n=top_n,
+                      gap_degrees=gap_degrees, link_limit=link_limit, baseline=baseline, figsize=figsize,
+                      label_orientation=label_orientation, inner_radius=inner_radius, outer_radius=outer_radius,
+                      max_label_chars=max_label_chars, score_scale=score_scale)
     _style(); own = ax is None
     fig = plt.figure(figsize=(183 / 25.4, 105 / 25.4), facecolor=BG) if own else ax.figure
     target = ax or fig.add_subplot(111)
@@ -329,15 +343,15 @@ def _save_rgb_raster(path: Path, dpi: int, *, tiff: bool = False) -> None:
         else: rgb.save(path, dpi=(dpi, dpi))
 
 
-def export_figure(fig: plt.Figure, out: Path, formats: Iterable[str]) -> list[Path]:
+def export_figure(fig: plt.Figure, out: Path, formats: Iterable[str], *, png_dpi: int = 350) -> list[Path]:
     out.parent.mkdir(parents=True, exist_ok=True)
     saved: list[Path] = []
     for fmt in formats:
         fmt = fmt.lower().lstrip(".")
         path = out.with_suffix(f".{fmt}")
-        if fmt in {"pdf", "svg"}: fig.savefig(path, format=fmt, bbox_inches="tight", facecolor=BG)
-        elif fmt == "png": fig.savefig(path, format=fmt, dpi=350, bbox_inches="tight", facecolor=BG); _save_rgb_raster(path, 350)
-        elif fmt in {"tif", "tiff"}: fig.savefig(path, format="tiff", dpi=600, bbox_inches="tight", facecolor=BG); _save_rgb_raster(path, 600, tiff=True)
+        if fmt in {"pdf", "svg"}: fig.savefig(path, format=fmt, bbox_inches="tight", facecolor=fig.get_facecolor())
+        elif fmt == "png": fig.savefig(path, format=fmt, dpi=png_dpi, bbox_inches="tight", facecolor=fig.get_facecolor()); _save_rgb_raster(path, png_dpi)
+        elif fmt in {"tif", "tiff"}: fig.savefig(path, format="tiff", dpi=600, bbox_inches="tight", facecolor=fig.get_facecolor()); _save_rgb_raster(path, 600, tiff=True)
         else: raise ValueError(f"Unsupported format: {fmt}")
         saved.append(path)
     return saved
@@ -353,8 +367,28 @@ def cmd_catalog(args: argparse.Namespace) -> int:
 
 
 def cmd_render(args: argparse.Namespace) -> int:
-    fig = render_kind(args.kind, seed=args.seed)
-    saved = export_figure(fig, Path(args.out), args.formats.split(","))
+    try:
+        fig = render_kind(args.kind, seed=args.seed, scores=getattr(args, "scores", None), links=getattr(args, "links", None),
+                          sectors=getattr(args, "sectors", None), signed_scores=getattr(args, "signed_scores", False),
+                          baseline=getattr(args, "baseline", 0), top_n=getattr(args, "top_n", 4),
+                          gap_degrees=getattr(args, "gap_degrees", 3), link_limit=getattr(args, "link_limit", 500),
+                          figsize=getattr(args, "figsize", 8), label_orientation=getattr(args, "label_orientation", "tangent"),
+                          inner_radius=getattr(args, "inner_radius", .48), outer_radius=getattr(args, "outer_radius", .83),
+                          max_label_chars=getattr(args, "max_label_chars", 18), score_scale=getattr(args, "scale", None))
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    circos = args.kind == "circos_lollipop_chord"
+    saved = export_figure(fig, Path(args.out), args.formats.split(","), png_dpi=600 if circos else 350)
+    if circos:
+        from circos_recipe import hashes, write_metadata
+        input_paths = [args.scores, args.links] + ([args.sectors] if args.sectors else [])
+        write_metadata(Path(args.out).with_suffix(".metadata.json"), hashes(input_paths),
+                       {"recipe": args.kind, "seed": args.seed, "top_n": args.top_n, "gap_degrees": args.gap_degrees,
+                        "link_limit": args.link_limit, "baseline": args.baseline, "signed_scores": args.signed_scores,
+                        "figsize_inches": args.figsize, "label_orientation": args.label_orientation,
+                        "inner_radius": args.inner_radius, "outer_radius": args.outer_radius,
+                        "max_label_chars": args.max_label_chars,
+                        "scale": args.scale if args.scale is not None else "max_abs_deviation_from_baseline"}, args.data_status)
     plt.close(fig)
     print(json.dumps({"kind": args.kind, "seed": args.seed, "files": [str(p) for p in saved]}, indent=2))
     return 0
@@ -377,10 +411,20 @@ def cmd_prompt(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Scientific Figure Studio: 128 recipes, exports, and mechanism prompt scaffolding")
+    parser = argparse.ArgumentParser(description="Scientific Figure Studio: 129 recipes, exports, and mechanism prompt scaffolding")
     sub = parser.add_subparsers(dest="command", required=True)
-    p = sub.add_parser("catalog", help="list the 128 plot recipes"); p.add_argument("--json", action="store_true"); p.set_defaults(func=cmd_catalog)
-    p = sub.add_parser("render", help="render one deterministic recipe"); p.add_argument("--kind", required=True, choices=sorted(CATALOG)); p.add_argument("--out", required=True); p.add_argument("--seed", type=int, default=0); p.add_argument("--formats", default="pdf,svg,png,tiff"); p.set_defaults(func=cmd_render)
+    p = sub.add_parser("catalog", help="list the 129 plot recipes"); p.add_argument("--json", action="store_true"); p.set_defaults(func=cmd_catalog)
+    p = sub.add_parser("render", help="render one deterministic recipe"); p.add_argument("--kind", required=True, choices=sorted(CATALOG)); p.add_argument("--out", required=True); p.add_argument("--seed", type=int, default=0); p.add_argument("--formats", default="pdf,svg,png,tiff")
+    p.add_argument("--scores", type=Path); p.add_argument("--links", type=Path); p.add_argument("--sectors", type=Path)
+    p.add_argument("--signed-scores", action="store_true", help="allow signed score values")
+    p.add_argument("--baseline", type=float, default=0, help="reference value for radial score scaling")
+    p.add_argument("--scale", type=float, help="positive score-deviation scale; defaults to max absolute deviation")
+    p.add_argument("--top-n", type=int, default=4); p.add_argument("--gap-degrees", type=float, default=3)
+    p.add_argument("--link-limit", type=int, default=500); p.add_argument("--figsize", type=float, default=8)
+    p.add_argument("--label-orientation", choices=("tangent", "radial"), default="tangent")
+    p.add_argument("--inner-radius", type=float, default=.48); p.add_argument("--outer-radius", type=float, default=.83)
+    p.add_argument("--max-label-chars", type=int, default=18)
+    p.add_argument("--data-status", choices=("demo", "real"), default="real"); p.set_defaults(func=cmd_render)
     p = sub.add_parser("contact-sheet", help="render a catalog contact sheet"); p.add_argument("--out", required=True); p.add_argument("--limit", type=int, default=32); p.add_argument("--start", type=int, default=0); p.add_argument("--columns", type=int, default=4); p.add_argument("--seed", type=int, default=0); p.set_defaults(func=cmd_contact)
     p = sub.add_parser("mechanism-prompt", help="print built-in imagegen prompt scaffolding"); p.add_argument("--request", default="a bounded scientific mechanism linking a measured state to context-specific outputs"); p.set_defaults(func=cmd_prompt)
     return parser

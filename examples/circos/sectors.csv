@@ -1,0 +1,7 @@
+sector,display_name,order,color
+Lung,Lung cancer,0,#DCE8EF
+Breast,Breast cancer,1,#E8E2E0
+Colon,Colorectal cancer,2,#DCE8EF
+Melanoma,Melanoma,3,#E8E2E0
+Ovarian,Ovarian cancer,4,#DCE8EF
+Prostate,Prostate cancer,5,#E8E2E0

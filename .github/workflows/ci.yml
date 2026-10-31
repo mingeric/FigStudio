@@ -1,0 +1,25 @@
+name: Figure renderer CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  circos-and-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python scripts/test_catalog.py --out-dir /tmp/figstudio-catalog --limit 129
+      - run: >-
+          python scripts/figure_studio.py render --kind circos_lollipop_chord
+          --scores examples/circos/gene_scores.csv --links examples/circos/links.csv
+          --sectors examples/circos/sectors.csv --data-status demo
+          --formats pdf,svg,png --out /tmp/figstudio-circos/circos
+      - run: >-
+          python scripts/qc_figures.py /tmp/figstudio-circos
+          --output /tmp/figstudio-circos/qc.tsv --json /tmp/figstudio-circos/qc.json
